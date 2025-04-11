@@ -13,7 +13,9 @@ export async function initializeDb () {
     CREATE TABLE IF NOT EXISTS events (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      date TEXT NOT NULL
+      date TEXT NOT NULL,
+      time TEXT NOT NULL,
+      duration INTEGER NOT NULL
     );
   `)
 

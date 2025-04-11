@@ -12,22 +12,22 @@ export async function getEventById (id) {
   return await db.get('SELECT * FROM events WHERE id = ?', id)
 }
 
-export async function createEvent (name, date) {
+export async function createEvent (name, date, time, duration) {
   const db = await dbPromise
   const result = await db.run(
-    'INSERT INTO events (name, date) VALUES (?, ?)',
-    [name, date]
+    'INSERT INTO events (name, date, time, duration) VALUES (?, ?, ?, ?)',
+    [name, date, time, duration]
   )
-  return { id: result.lastID, name, date }
+  return { id: result.lastID, name, date, time, duration }
 }
 
-export async function updateEvent (id, name, date) {
+export async function updateEvent (id, name, date, time, duration) {
   const db = await dbPromise
   await db.run(
-    'UPDATE events SET name = ?, date = ? WHERE id = ?',
-    [name, date, id]
+    'UPDATE events SET name = ?, date = ?, time = ?, duration = ? WHERE id = ?',
+    [name, date, time, duration, id]
   )
-  return { id: Number(id), name, date }
+  return { id: Number(id), name, date, time, duration }
 }
 
 export async function deleteEvent (id) {
