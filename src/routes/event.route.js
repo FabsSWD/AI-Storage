@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { eventSchema } from '../validators/event.validator.js'
-import { validate } from '../middleware/validate.js'
+import { eventSchema } from '../utils/event.validator.js'
+import { validate } from '../utils/event.middleware.js'
 import {
   listEvents,
   showEvent,
