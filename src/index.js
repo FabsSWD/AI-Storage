@@ -1,14 +1,14 @@
+import './config/env.js'
 import express from 'express'
-import dotenv from 'dotenv'
+import assistantRouter from './routes/assistant.route.js'
 import eventsRouter from './routes/event.route.js'
-
-dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 
+app.use('/assistant', assistantRouter)
 app.use('/events', eventsRouter)
 
 app.use((req, res, next) => {
