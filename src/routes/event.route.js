@@ -1,4 +1,6 @@
 import { Router } from 'express'
+import { eventSchema } from '../validators/event.validator.js'
+import { validate } from '../middleware/validate.js'
 import {
   listEvents,
   showEvent,
@@ -11,8 +13,8 @@ const router = Router()
 
 router.get('/', listEvents)
 router.get('/:id', showEvent)
-router.post('/', createNewEvent)
-router.put('/:id', updateExistingEvent)
+router.post('/', validate(eventSchema), createNewEvent)
+router.put('/:id', validate(eventSchema), updateExistingEvent)
 router.delete('/:id', deleteExistingEvent)
 
 export default router
