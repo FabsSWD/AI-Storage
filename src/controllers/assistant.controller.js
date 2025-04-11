@@ -44,7 +44,7 @@ export async function handleAssistantRequest (req, res) {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o-mini',
       messages: messagesPayload,
       temperature: 0
     })
