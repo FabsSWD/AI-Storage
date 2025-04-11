@@ -12,8 +12,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
     "openai": "^4.93.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
