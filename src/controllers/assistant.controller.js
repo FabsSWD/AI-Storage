@@ -1,3 +1,4 @@
+// Importamos la librería OpenAI y los métodos del modelo para interactuar con eventos
 import OpenAI from 'openai'
 import {
   createEvent as createEventModel,
@@ -5,18 +6,24 @@ import {
   getEventById
 } from '../models/event.model.js'
 
+// Creamos una instancia del cliente de OpenAI usando la API key desde las variables de entorno
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
+// Función que maneja la solicitud HTTP que viene del usuario para interactuar con el asistente
 export async function handleAssistantRequest (req, res) {
   const { message } = req.body
+
+  // Validación: si no hay mensaje, respondemos con error 400
   if (!message) {
     return res.status(400).json({ error: 'Message is required.' })
   }
 
+  // Obtenemos la fecha y hora actuales para el prompt del sistema
   const now = new Date()
-  const currentDate = now.toISOString().split('T')[0]
-  const currentTime = now.toTimeString().substring(0, 5)
+  const currentDate = now.toISOString().split('T')[0] // Formato: YYYY-MM-DD
+  const currentTime = now.toTimeString().substring(0, 5) // Formato: HH:MM
 
+  // Definimos el mensaje del sistema que le indica al modelo cómo debe comportarse
   const systemPrompt =
     "You are a virtual assistant for event management. Today's date is " +
     currentDate +
@@ -37,21 +44,26 @@ export async function handleAssistantRequest (req, res) {
     'If the request is unclear, respond with: {"action": "error", "params": { "message": "The request is not understood." }}. ' +
     'Your response must be valid JSON without any additional text.'
 
+  // Creamos la conversación para enviar al modelo
   const messagesPayload = [
     { role: 'system', content: systemPrompt },
     { role: 'user', content: message }
   ]
 
   try {
+    // Hacemos la petición al modelo de OpenAI (usamos GPT-4o-mini)
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: messagesPayload,
-      temperature: 0
+      temperature: 0 // Temperatura baja para respuestas más deterministas
     })
 
+    // Extraemos el contenido de la respuesta
     const gptResponse = completion.choices[0].message.content
+
     let parsedResponse
     try {
+      // Intentamos parsear la respuesta como JSON
       parsedResponse = JSON.parse(gptResponse)
     } catch (parseError) {
       return res.status(500).json({
@@ -62,6 +74,8 @@ export async function handleAssistantRequest (req, res) {
 
     const { action, params } = parsedResponse
     let result
+
+    // Ejecutamos la acción correspondiente según la respuesta del modelo
     switch (action) {
       case 'createEvent':
         if (
@@ -103,6 +117,8 @@ export async function handleAssistantRequest (req, res) {
       default:
         return res.status(400).json({ error: 'Unknown action.' })
     }
+
+    // Enviamos la respuesta con el resultado
     return res.json({ action, result })
   } catch (error) {
     console.error('Error in handleAssistantRequest:', error)
